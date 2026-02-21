@@ -1,0 +1,166 @@
+{
+  "type": "scalar.function",
+  "input_schema": {
+    "type": "object",
+    "description": "A photograph of a cat in a visual setting to be evaluated for overall harmony between the cat subject, lighting, and environment.",
+    "properties": {
+      "photo": {
+        "type": "image",
+        "description": "A photograph containing a cat in a visual setting. The image will be evaluated holistically for how well the lighting, background, and spatial composition work together to create a coherent, inviting scene where the cat feels like it naturally belongs."
+      }
+    },
+    "required": [
+      "photo"
+    ]
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.photo"
+            },
+            {
+              "type": "text",
+              "text": "Look at this photograph of a cat. Are the lighting and the environment telling the same visual story? Do the color temperatures, mood, and sense of place all cooperate to create a single coherent scene, or do they pull in conflicting directions?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The light and environment are in complete agreement. They share the same mood, color temperature, and sense of place — everything in the frame cooperates to create one unified, coherent scene. The viewer's eye moves through the image without friction."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The light and environment are partially compatible. They mostly work together, but there are subtle tensions — slight clashes in color temperature, mood, or tone that prevent the scene from feeling fully unified."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The light and environment are working against each other. They clash in mood, color temperature, or tone, creating a disjointed scene where the visual elements pull in conflicting directions rather than cooperating."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output['scores'][0] * 1.0 + output['scores'][1] * 0.5 + output['scores'][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You are an expert in photographic composition. You specialize in evaluating whether the primary subject of a photograph feels naturally placed within its setting — whether the composition treats the subject as the welcomed center of the scene or whether the subject appears marginalized, incidental, or out of place."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.photo"
+            },
+            {
+              "type": "text",
+              "text": "Does the cat in this photograph look like it belongs in its setting? Does the composition present it as a creature that has chosen its place, or does it feel like an afterthought within the frame?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The cat looks completely at home. The composition centers on it naturally, and the setting feels like it was made for this animal — or the animal for the setting. The cat has clearly chosen its place, and the frame respects that."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is present but doesn't feel entirely settled in its environment. The composition gives it some attention, but the relationship between subject and setting is not fully convincing — the cat is neither lost nor perfectly placed."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat feels out of place or marginalized. It is lost in the frame, pushed to the edges, or overwhelmed by a setting that does not seem to acknowledge it. The composition treats the cat as incidental rather than central."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output['scores'][0] * 1.0 + output['scores'][1] * 0.5 + output['scores'][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Here is a photograph of a cat. I would like you to consider the overall mood and atmosphere of the scene."
+            },
+            {
+              "$jmespath": "input.photo"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "I can see the photograph. I am taking in the full scene — the colors, the atmosphere, and the way the cat sits within its surroundings."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Looking at the whole image — the color palette, the atmosphere, and the interplay between the living cat and its surroundings — does this photograph draw you in with warmth and welcome, or does it hold you at a distance?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "This photograph draws me in completely. The colors, atmosphere, and the cat within its surroundings create a warm, hospitable feeling — the kind of image that makes you want to stay and look a little longer. It feels lived-in and alive."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The photograph is neither particularly inviting nor off-putting. The mood is neutral — it does not push me away, but it also does not draw me in with any real warmth or sense of welcome. I notice it without feeling compelled to linger."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "This photograph holds me at a distance. The scene feels cold, sterile, or emotionally flat — the atmosphere lacks warmth, and the cat's living presence is dampened by surroundings that feel unwelcoming or clinical. I do not feel invited to stay."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output['scores'][0] * 1.0 + output['scores'][1] * 0.5 + output['scores'][2] * 0.0"
+      }
+    }
+  ],
+  "description": "Evaluates the overall harmony of a cat photograph by scoring how well lighting, background, and composition work together as a unified whole. Measures the emergent coherence of the entire scene — whether elements cooperate to create an inviting moment where the cat belongs, or pull in conflicting directions despite any individual strengths."
+}
